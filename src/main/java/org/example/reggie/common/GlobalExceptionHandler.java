@@ -18,7 +18,8 @@ public class GlobalExceptionHandler {
         log.error(ex.getMessage());
         if (ex.getMessage().contains("Duplicate entry")) {
             String[] split = ex.getMessage().split(" ");
-            String msg = split[2] + " existed";
+
+            String msg = split[2] + "has existed";
             return R.error(msg);
         }
         return R.error("fail");
