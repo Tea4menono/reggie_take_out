@@ -1,11 +1,15 @@
-package com.itheima.reggie.entity;
+package org.example.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 员工实体
+ */
 @Data
 public class Employee implements Serializable {
 
@@ -23,9 +27,9 @@ public class Employee implements Serializable {
 
     private String sex;
 
-    private String idNumber;
+    private String idNumber;//身份证号码
 
-    private Integer status;
+    private Integer status;//锁定状态
 
     private LocalDateTime createTime;
 
