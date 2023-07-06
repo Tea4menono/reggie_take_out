@@ -15,7 +15,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public R<String> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
-        log.error(ex.getMessage());
         if (ex.getMessage().contains("Duplicate entry")) {
             String[] split = ex.getMessage().split(" ");
 
@@ -26,4 +25,8 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ex) {
+        return R.error(ex.getMessage());
+    }
 }
