@@ -32,6 +32,12 @@ public class DishController {
         return R.success("add new dish successfully");
     }
 
+    @PutMapping
+    public R<String> edit(@RequestBody DishDto dishDto) {
+        dishService.updateWithFlavor(dishDto);
+        return R.success("edit dish successfully");
+    }
+
 
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
@@ -46,7 +52,6 @@ public class DishController {
         BeanUtils.copyProperties(pageInfo, dishDtoPage, "records");
         List<Dish> records = pageInfo.getRecords();
 
-        
         List<DishDto> list = records.stream().map((item) -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
@@ -55,6 +60,25 @@ public class DishController {
         }).collect(Collectors.toList());
         dishDtoPage.setRecords(list);
         return R.success(dishDtoPage);
+
+    }
+
+    @GetMapping("/{id}")
+    public R<DishDto> get(@PathVariable Long id) {
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
+
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish) {
+
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+        queryWrapper.eq(Dish::getStatus, 1);
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
+    
 
     }
 }
