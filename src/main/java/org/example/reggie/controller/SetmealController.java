@@ -6,10 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.reggie.common.R;
 import org.example.reggie.dto.SetmealDto;
 import org.example.reggie.entity.Setmeal;
-import org.example.reggie.service.SetmealDishService;
+import org.example.reggie.service.CategoryService;
 import org.example.reggie.service.SetmealService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -17,8 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
+
     @Autowired
-    private SetmealDishService setmealDishService;
+    private CategoryService categoryService;
+
 
     @PostMapping
     public R<String> save(@RequestBody SetmealDto setmealDto) {
@@ -32,8 +38,8 @@ public class SetmealController {
         log.info("page={},pageSize={},name={}", page, pageSize, name);
 
         //create page constructor
-        Page pageInfo = new Page<>(page, pageSize);
-
+        Page<Setmeal> pageInfo = new Page<>(page, pageSize);
+        Page<SetmealDto> dtoPage = new Page<>(page, pageSize);
         //create condition constructor
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper();
 
@@ -43,8 +49,24 @@ public class SetmealController {
 
         setmealService.page(pageInfo, queryWrapper);
 
-        return R.success(pageInfo);
+        BeanUtils.copyProperties(pageInfo, dtoPage, "records");
 
+        List<Setmeal> records = pageInfo.getRecords();
+
+        List<SetmealDto> list = records.stream().map((item) -> {
+            SetmealDto setmealDto = new SetmealDto();
+            BeanUtils.copyProperties(item, setmealDto);
+            setmealDto.setCategoryName(categoryService.getById(item.getCategoryId()).getName());
+            return setmealDto;
+        }).collect(Collectors.toList());
+        dtoPage.setRecords(list);
+        return R.success(dtoPage);
+    }
+
+    @DeleteMapping
+    public R<String> delete(@RequestParam List<Long> ids) {
+        setmealService.removeWithDish(ids);
+        return R.success("delete successfully");
     }
 
 }

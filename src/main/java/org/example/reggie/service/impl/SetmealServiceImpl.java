@@ -1,7 +1,9 @@
 package org.example.reggie.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.example.reggie.common.CustomException;
 import org.example.reggie.dto.SetmealDto;
 import org.example.reggie.entity.Setmeal;
 import org.example.reggie.entity.SetmealDish;
@@ -34,4 +36,24 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         setmealDishService.saveBatch(setmealDishes);
     }
 
+    @Override
+    @Transactional
+    public void removeWithDish(List<Long> ids) {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId, ids);
+        queryWrapper.eq(Setmeal::getStatus, 1);
+        int count = this.count(queryWrapper);
+        if (count > 0) {
+            throw new CustomException("setmeal is under selling");
+        }
+
+
+        this.removeByIds(ids);
+
+        LambdaQueryWrapper<SetmealDish> queryWrapper1 = new LambdaQueryWrapper<>();
+        queryWrapper1.in(SetmealDish::getDishId, ids);
+        setmealDishService.remove(queryWrapper1);
+
+
+    }
 }
