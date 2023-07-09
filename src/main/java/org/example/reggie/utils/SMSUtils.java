@@ -21,7 +21,7 @@ public class SMSUtils {
      * @param param        参数
      */
     public static void sendMessage(String signName, String templateCode, String phoneNumbers, String param) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "", "");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI5tBpsD9DEGHSDHqqwooB", "Wja2h6wuQ0Dy6LRbGZD5nIODd9l85H");
         IAcsClient client = new DefaultAcsClient(profile);
 
         SendSmsRequest request = new SendSmsRequest();
@@ -32,7 +32,7 @@ public class SMSUtils {
         request.setTemplateParam("{\"code\":\"" + param + "\"}");
         try {
             SendSmsResponse response = client.getAcsResponse(request);
-            System.out.println("短信发送成功");
+            System.out.println(response);
         } catch (ClientException e) {
             e.printStackTrace();
         }
