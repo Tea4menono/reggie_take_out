@@ -6,11 +6,20 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * 短信发送工具类
  */
 public class SMSUtils {
+
+    @Value("${reggie.accessKey}")
+    private static String accessKey;
+
+
+    @Value("${reggie.accessSecret}")
+    private static String accessSecret;
 
     /**
      * 发送短信
@@ -21,7 +30,8 @@ public class SMSUtils {
      * @param param        参数
      */
     public static void sendMessage(String signName, String templateCode, String phoneNumbers, String param) {
-        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "LTAI5tBpsD9DEGHSDHqqwooB", "Wja2h6wuQ0Dy6LRbGZD5nIODd9l85H");
+        Dotenv dotenv = Dotenv.load();
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", dotenv.get("ACCESS_KEY"), dotenv.get("ACCESS_PASSWORD"));
         IAcsClient client = new DefaultAcsClient(profile);
 
         SendSmsRequest request = new SendSmsRequest();

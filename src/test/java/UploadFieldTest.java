@@ -1,10 +1,13 @@
+import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.Test;
 
 public class UploadFieldTest {
     @Test
     public void test1() {
-        String filename = "12321.jpg";
-        String suffix = filename.substring(filename.lastIndexOf("."));
-        System.out.println(suffix);
+
+        Dotenv dotenv = Dotenv.load();
+        System.out.println(dotenv.get("ACCESS_KEY"));
+        System.out.println(dotenv.get("ACCESS_PASSWORD"));
+
     }
 }
