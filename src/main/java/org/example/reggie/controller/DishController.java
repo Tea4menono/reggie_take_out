@@ -7,7 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.example.reggie.common.R;
 import org.example.reggie.dto.DishDto;
 import org.example.reggie.entity.Dish;
+import org.example.reggie.entity.DishFlavor;
 import org.example.reggie.service.CategoryService;
+import org.example.reggie.service.DishFlavorService;
 import org.example.reggie.service.DishService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class DishController {
     private CategoryService categoryService;
     @Autowired
     private DishService dishService;
+
+    @Autowired
+    private DishFlavorService dishFlavorService;
 
 
     @PostMapping
@@ -69,16 +74,41 @@ public class DishController {
         return R.success(dishDto);
     }
 
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(Dish dish) {
+//
+//        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
+//        queryWrapper.eq(Dish::getStatus, 1);
+//        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//        List<Dish> list = dishService.list(queryWrapper);
+//        return R.success(list);
+//    }
+//
+
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) {
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
         queryWrapper.eq(Dish::getStatus, 1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
-    
 
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+
+            // set dishDto category name
+            dishDto.setCategoryName(categoryService.getById(item.getCategoryId()).getName());
+
+            // set dishDto flavors list
+            LambdaQueryWrapper<DishFlavor> queryWrapper1 = new LambdaQueryWrapper<>();
+            queryWrapper1.eq(DishFlavor::getDishId, dishDto.getId());
+            dishDto.setFlavors(dishFlavorService.list(queryWrapper1));
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dishDtoList);
     }
+
 }

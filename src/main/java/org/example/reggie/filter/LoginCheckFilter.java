@@ -50,7 +50,7 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
-        //判断登录状态 如果已经登录 直接放行
+        // visiting backend must have employee session
         if (request.getSession().getAttribute("employee") != null) {
             log.info("用户已经登录，用户ID为：{}", request.getSession().getAttribute("employee"));
 
@@ -60,6 +60,7 @@ public class LoginCheckFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
+
         if (request.getSession().getAttribute("user") != null) {
             log.info("用户已经登录，用户ID为：{}", request.getSession().getAttribute("user"));
 

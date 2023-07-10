@@ -48,8 +48,14 @@ public class CommonController {
 
     @GetMapping("/download")
     public void download(String name, HttpServletResponse httpServletResponse) {
+
+        File imageFile = new File(basePath + name);
+        if (!imageFile.exists()) {
+            imageFile = new File(basePath + "empty.jpg"); // Serve the empty image file
+        }
+        
         try {
-            FileInputStream fileInputStream = new FileInputStream(new File(basePath + name));
+            FileInputStream fileInputStream = new FileInputStream(imageFile);
             ServletOutputStream outputStream = httpServletResponse.getOutputStream();
 
             httpServletResponse.setContentType("image/jpeg");
@@ -63,6 +69,8 @@ public class CommonController {
             outputStream.close();
             fileInputStream.close();
         } catch (IOException e) {
+
+
             throw new RuntimeException(e);
         }
 
