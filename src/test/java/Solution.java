@@ -15,7 +15,7 @@ class Solution {
             dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i + 1]);
         }
 
-
+        System.out.println(123);
         return Math.max(max, dp[dp.length - 1]);
     }
 }
