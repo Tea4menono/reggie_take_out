@@ -53,7 +53,7 @@ public class CommonController {
         if (!imageFile.exists()) {
             imageFile = new File(basePath + "empty.jpg"); // Serve the empty image file
         }
-        
+
         try {
             FileInputStream fileInputStream = new FileInputStream(imageFile);
             ServletOutputStream outputStream = httpServletResponse.getOutputStream();

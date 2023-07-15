@@ -19,4 +19,4 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 reggie:
-  path: /Users/caixuli/Downloads/Code/
+  path: /Users/caixuli/Downloads/Code/Backend/reggie_take_out/src/main/resources/upload/
