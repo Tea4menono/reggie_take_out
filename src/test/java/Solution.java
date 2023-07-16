@@ -1,21 +1,18 @@
 class Solution {
-    public int rob(int[] nums) {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
 
-        int[] dp = new int[nums.length - 1];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0 || j == 0) {
+                    dp[i][j] = 1;
+                }
 
-        dp[0] = nums[0];
-        dp[1] = Math.max(nums[0], nums[1]);
-
-        for (int i = 2; i < dp.length; i++) {
-            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
         }
 
-        int max = dp[dp.length - 1];
-        for (int i = 2; i < dp.length; i++) {
-            dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i + 1]);
-        }
+        return dp[m - 1][n - 1];
 
-        System.out.println(123);
-        return Math.max(max, dp[dp.length - 1]);
     }
 }
